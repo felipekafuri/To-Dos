@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
 
 import { Header } from '../components/Header';
 import { MyTasksList } from '../components/MyTasksList';
@@ -11,19 +12,42 @@ interface Task {
 }
 
 export function Home() {
-  // const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   function handleAddTask(newTaskTitle: string) {
-    //TODO - add new task if it's not empty
+    const task ={
+      id: new Date().getTime(),
+      title: newTaskTitle,
+      done: false
+    }
+
+    if(newTaskTitle===''){
+      return Alert.alert('Write something before')
+    }
+
+    setTasks([...tasks, task]);
   }
 
   function handleMarkTaskAsDone(id: number) {
-    //TODO - mark task as done if exists
-  }
+    const taskIndex = tasks.findIndex(task => task.id === id)
+    
+    if(tasks[taskIndex].done === true){
+      tasks[taskIndex].done = false
+    }else{
+      tasks[taskIndex].done = true
+    }
+    
 
-  function handleRemoveTask(id: number) {
-    //TODO - remove task from state
+    setTasks([...tasks])
   }
+  const handleRemoveTask = useCallback(
+    id => {
+    const taskIndex = tasks.findIndex(task => task.id === id)
+    tasks.splice(taskIndex, 1);
+      setTasks([...tasks]);
+    },
+    [tasks, setTasks],
+  );
 
   return (
     <>
